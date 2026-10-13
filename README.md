@@ -81,6 +81,12 @@ populated Excel in *your* template, gap report, and cited memo shell out
 the loop. The research behind the design (process, competition, failure
 modes) is documented separately; ask about the viability brief.
 
+**The bigger picture:** DealScreener is one half of a fused system with
+[Atlas](https://github.com/brendanmckenney0/atlas-helpdesk) (multi-source
+RAG chatbot) — an underwriting copilot where screening feeds a
+conversational layer over all deal data. See the
+[fusion vision doc](https://github.com/brendanmckenney0/atlas-helpdesk/blob/main/docs/fusion-vision.md).
+
 ## Repo layout
 
 ```
