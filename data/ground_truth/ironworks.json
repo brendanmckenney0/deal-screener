@@ -1,0 +1,57 @@
+{
+  "om_id": "ironworks",
+  "fields": {
+    "property_name": {
+      "value": "Ironworks Industrial Park",
+      "page": 2
+    },
+    "address": {
+      "value": "2500 Foundry Avenue, Gary, IN 46406",
+      "page": 2
+    },
+    "total_units": {
+      "value": null,
+      "page": 2
+    },
+    "unit_mix": {
+      "value": null,
+      "page": 2
+    },
+    "occupancy_pct": {
+      "value": 93.5,
+      "page": 3
+    },
+    "avg_rent": {
+      "value": 6.75,
+      "page": 3
+    },
+    "t12_noi": {
+      "value": 402300,
+      "page": 4
+    },
+    "total_expenses": {
+      "value": 168400,
+      "page": 4
+    },
+    "expenses_breakdown": {
+      "value": null,
+      "page": 4
+    },
+    "asking_price": {
+      "value": 5750000,
+      "page": 5
+    },
+    "cap_rate_pct": {
+      "value": null,
+      "page": 5
+    },
+    "proforma_noi": {
+      "value": 438000,
+      "page": 5
+    },
+    "sale_terms": {
+      "value": "$200,000 earnest money deposit. 30-day due diligence period. Seller to deliver estoppels within 15 days of acceptance.",
+      "page": 5
+    }
+  }
+}

@@ -1,0 +1,80 @@
+{
+  "om_id": "harbor_point",
+  "fields": {
+    "property_name": {
+      "value": "Harbor Point",
+      "page": 2
+    },
+    "address": {
+      "value": "88 Harbor Drive, Tampa, FL 33602",
+      "page": 2
+    },
+    "total_units": {
+      "value": 48,
+      "page": 2
+    },
+    "unit_mix": {
+      "value": [
+        {
+          "unit_type": "Studio",
+          "count": 12,
+          "avg_rent": 1150
+        },
+        {
+          "unit_type": "1 Bedroom",
+          "count": 24,
+          "avg_rent": 1450
+        },
+        {
+          "unit_type": "2 Bedroom",
+          "count": 12,
+          "avg_rent": 1850
+        }
+      ],
+      "page": 3
+    },
+    "avg_rent": {
+      "value": 1475.0,
+      "page": 3
+    },
+    "occupancy_pct": {
+      "value": 91.0,
+      "page": 4
+    },
+    "expenses_breakdown": {
+      "value": {
+        "Property Taxes": 142000,
+        "Insurance": 54500,
+        "Management": 58988,
+        "Maintenance & Repairs": 96400,
+        "Utilities": 71200,
+        "Payroll": 88000
+      },
+      "page": 5
+    },
+    "total_expenses": {
+      "value": 511088,
+      "page": 5
+    },
+    "t12_noi": {
+      "value": 472048,
+      "page": 5
+    },
+    "proforma_noi": {
+      "value": 545000,
+      "page": 6
+    },
+    "asking_price": {
+      "value": 8900000,
+      "page": 7
+    },
+    "cap_rate_pct": {
+      "value": 5.3,
+      "page": 7
+    },
+    "sale_terms": {
+      "value": "Seller will consider seller financing with 40% down payment at market rates. $250,000 earnest money deposit. 45-day study period; closing 21 days thereafter.",
+      "page": 7
+    }
+  }
+}

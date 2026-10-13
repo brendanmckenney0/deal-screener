@@ -1,0 +1,80 @@
+{
+  "om_id": "maple_grove",
+  "fields": {
+    "property_name": {
+      "value": "Maple Grove Apartments",
+      "page": 2
+    },
+    "address": {
+      "value": "1420 Elm Street, Dayton, OH 45402",
+      "page": 2
+    },
+    "total_units": {
+      "value": 120,
+      "page": 2
+    },
+    "unit_mix": {
+      "value": [
+        {
+          "unit_type": "1 Bedroom",
+          "count": 40,
+          "avg_rent": 1050
+        },
+        {
+          "unit_type": "2 Bedroom",
+          "count": 60,
+          "avg_rent": 1350
+        },
+        {
+          "unit_type": "3 Bedroom",
+          "count": 20,
+          "avg_rent": 1650
+        }
+      ],
+      "page": 3
+    },
+    "avg_rent": {
+      "value": 1300.0,
+      "page": 3
+    },
+    "occupancy_pct": {
+      "value": 94.0,
+      "page": 4
+    },
+    "expenses_breakdown": {
+      "value": {
+        "Property Taxes": 210000,
+        "Insurance": 68000,
+        "Management": 92784,
+        "Maintenance": 145000,
+        "Utilities": 128000,
+        "Payroll": 100216
+      },
+      "page": 5
+    },
+    "total_expenses": {
+      "value": 744000,
+      "page": 5
+    },
+    "t12_noi": {
+      "value": 1111680,
+      "page": 5
+    },
+    "proforma_noi": {
+      "value": 1245000,
+      "page": 6
+    },
+    "asking_price": {
+      "value": 16500000,
+      "page": 7
+    },
+    "cap_rate_pct": {
+      "value": 6.74,
+      "page": 7
+    },
+    "sale_terms": {
+      "value": "All-cash offers preferred. $500,000 earnest money deposit, hard after due diligence. 60-day due diligence period; closing 30 days thereafter. Seller will cooperate with 1031 exchange at no cost to seller.",
+      "page": 7
+    }
+  }
+}

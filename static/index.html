@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>DealScreener — OM Intake Demo</title>
+<style>
+  :root { --bg:#0e1117; --panel:#161b24; --border:#2a3342; --text:#e6e9ef;
+          --muted:#9aa4b2; --accent:#5aa2ff; --ok:#3fb96f; --warn:#e0a93e;
+          --bad:#e05e5e; }
+  * { box-sizing:border-box; }
+  body { background:var(--bg); color:var(--text);
+         font-family:system-ui,-apple-system,"Segoe UI",sans-serif;
+         margin:0; padding:24px; }
+  .wrap { max-width:1080px; margin:0 auto; }
+  h1 { font-size:26px; margin:0 0 4px; }
+  .sub { color:var(--muted); margin:0 0 24px; font-size:14px; }
+  .card { background:var(--panel); border:1px solid var(--border);
+          border-radius:10px; padding:18px; margin-bottom:18px; }
+  .drop { border:2px dashed var(--border); border-radius:10px; padding:28px;
+          text-align:center; color:var(--muted); cursor:pointer; }
+  .drop:hover { border-color:var(--accent); color:var(--text); }
+  .samples { display:flex; gap:8px; flex-wrap:wrap; margin-top:12px; }
+  button { background:var(--accent); color:#04122b; border:0; border-radius:8px;
+           padding:9px 16px; font-weight:600; cursor:pointer; font-size:14px; }
+  button.ghost { background:transparent; color:var(--accent);
+                 border:1px solid var(--accent); }
+  button:disabled { opacity:.5; cursor:default; }
+  table { width:100%; border-collapse:collapse; font-size:14px; }
+  th, td { text-align:left; padding:8px 10px; border-bottom:1px solid var(--border);
+           vertical-align:top; }
+  th { color:var(--muted); font-weight:600; font-size:12px;
+       text-transform:uppercase; letter-spacing:.04em; }
+  .badge { display:inline-block; padding:2px 8px; border-radius:20px;
+           font-size:11px; font-weight:700; }
+  .b-ok { background:rgba(63,185,111,.15); color:var(--ok); }
+  .b-nf { background:rgba(224,169,62,.15); color:var(--warn); }
+  .b-un { background:rgba(224,94,94,.15); color:var(--bad); }
+  .cite { color:var(--muted); font-size:12px; font-style:italic; }
+  .memo { white-space:pre-wrap; font-size:13.5px; line-height:1.55;
+          font-family:ui-monospace,SFMono-Regular,Menlo,monospace; }
+  .check-pass { color:var(--ok); } .check-warn { color:var(--warn); }
+  .check-skip { color:var(--muted); }
+  .spinner { display:none; color:var(--muted); margin-top:12px; }
+  .gap { border-left:3px solid var(--warn); padding:8px 12px; margin:8px 0;
+         background:rgba(224,169,62,.06); font-size:14px; }
+  h2 { font-size:18px; margin:0 0 12px; }
+  .mono { font-family:ui-monospace,Menlo,monospace; font-size:13px; }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <h1>DealScreener</h1>
+  <p class="sub">Offering-memorandum intake &amp; first-pass screening demo.
+     Upload an OM PDF — fields extract with page citations, gaps get flagged,
+     nothing is hallucinated.</p>
+
+  <div class="card">
+    <div class="drop" id="drop">Drop an OM PDF here, or click to choose a file
+      <input type="file" id="file" accept=".pdf" style="display:none">
+    </div>
+    <div class="samples" id="samples"></div>
+    <div class="spinner" id="spin">Analyzing&hellip; extracting fields with citations</div>
+  </div>
+
+  <div id="results" style="display:none">
+    <div class="card"><h2>Extracted fields <span class="cite" id="meta"></span></h2>
+      <table><thead><tr><th>Field</th><th>Value</th><th>Page</th><th>Status</th></tr></thead>
+      <tbody id="fields"></tbody></table>
+    </div>
+    <div class="card"><h2>Reconciliation (deterministic checks)</h2><div id="recon"></div></div>
+    <div class="card"><h2>Gap report &mdash; broker questions</h2><div id="gaps"></div></div>
+    <div class="card"><h2>First-pass memo shell</h2><div class="memo" id="memo"></div></div>
+  </div>
+</div>
+
+<script>
+const $ = id => document.getElementById(id);
+const drop = $('drop'), file = $('file');
+
+drop.onclick = () => file.click();
+file.onchange = () => upload(file.files[0]);
+['dragover','dragleave','drop'].forEach(ev => drop.addEventListener(ev, e => {
+  e.preventDefault();
+  if (ev === 'drop' && e.dataTransfer.files.length) upload(e.dataTransfer.files[0]);
+}));
+
+fetch('/samples').then(r => r.json()).then(d => {
+  d.samples.forEach(s => {
+    const b = document.createElement('button');
+    b.className = 'ghost'; b.textContent = 'Sample: ' + s;
+    b.onclick = () => runSample(s);
+    $('samples').appendChild(b);
+  });
+});
+
+function upload(f) {
+  if (!f) return;
+  const fd = new FormData(); fd.append('file', f);
+  go('/analyze', {method:'POST', body:fd});
+}
+function runSample(name) {
+  go('/analyze_sample?name=' + encodeURIComponent(name), {method:'POST'});
+}
+function go(url, opts) {
+  $('spin').style.display = 'block';
+  $('results').style.display = 'none';
+  fetch(url, opts).then(r => r.json()).then(render)
+    .catch(e => { $('spin').textContent = 'Error: ' + e; });
+}
+
+function esc(s){ return String(s??'').replace(/[&<>"]/g,
+  c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c])); }
+
+function fmtVal(name, v) {
+  if (v === null || v === undefined) return '<span class="cite">—</span>';
+  if (Array.isArray(v)) return v.map(r =>
+    esc(`${r.unit_type}: ${r.count} @ $${Number(r.avg_rent).toLocaleString()}/mo`)).join('<br>');
+  if (typeof v === 'object') return Object.entries(v).map(([k,x]) =>
+    esc(`${k}: $${Number(x).toLocaleString()}`)).join('<br>');
+  if (typeof v === 'number') return esc(v.toLocaleString());
+  return esc(v);
+}
+
+function render(res) {
+  $('spin').style.display = 'none';
+  if (res.error) { $('spin').style.display='block';
+    $('spin').textContent = 'Error: ' + res.error; return; }
+  $('meta').textContent = `${res.file} · ${res.pages} pages · provider: ${res.provider}`;
+  const badge = s => s === 'ok' ? '<span class="badge b-ok">ok</span>'
+    : s === 'not_found' ? '<span class="badge b-nf">⚠ not found</span>'
+    : '<span class="badge b-un">uncertain</span>';
+  $('fields').innerHTML = Object.entries(res.fields).map(([k,f]) =>
+    `<tr><td class="mono">${esc(k)}</td><td>${fmtVal(k, f.value)}</td>` +
+    `<td>${f.page ? 'p.'+f.page : '—'}</td><td>${badge(f.status)}` +
+    (f.citation ? `<div class="cite">${esc(f.citation)}</div>` : '') + `</td></tr>`).join('');
+  $('recon').innerHTML = res.reconciliation.map(c =>
+    `<div class="check-${c.status}">[${c.status.toUpperCase()}] <b>${esc(c.check)}</b> — ${esc(c.detail)}</div>`).join('');
+  $('gaps').innerHTML = res.gaps.length
+    ? res.gaps.map(g => `<div class="gap"><b>${esc(g.field)}</b> (${esc(g.status)})<br>${esc(g.question)}</div>`).join('')
+    : '<span style="color:var(--ok)">None — all target fields extracted with citations.</span>';
+  $('memo').textContent = res.memo;
+  $('results').style.display = 'block';
+  window.scrollTo({top: 400, behavior:'smooth'});
+}
+</script>
+</body>
+</html>
