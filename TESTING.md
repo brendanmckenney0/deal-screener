@@ -48,7 +48,7 @@ python scripts/generate_oms.py
 ## 4. Start the app
 
 ```bash
-PROVIDER=local uvicorn app:app
+PROVIDER=local python -m uvicorn app:app
 ```
 
 **Success:** the last lines read something like:
@@ -63,7 +63,7 @@ internet needed.
 
 > **Port already in use?** If you see `address already in use`, either
 > stop the other program or run on a different port:
-> `PROVIDER=local uvicorn app:app --port 8001` (then use
+> `PROVIDER=local python -m uvicorn app:app --port 8001` (then use
 > `http://127.0.0.1:8001` below).
 
 ## 5. Open the demo
@@ -119,7 +119,7 @@ phrasing of the sample OMs. For real-world PDFs:
 
 ```bash
 export OPENAI_API_KEY="sk-..."
-PROVIDER=openai uvicorn app:app
+PROVIDER=openai python -m uvicorn app:app
 ```
 
 Then upload any OM-style PDF. Expect it to be slower (10–30s) and to
@@ -141,6 +141,7 @@ environment: `deactivate`.
 | `python3: command not found` | Install Python 3.10+ from python.org |
 | `pip install` fails on Apple Silicon | Make sure you're on Python 3.10+; all packages ship arm64 wheels |
 | `address already in use` | Use `--port 8001` (see step 4) |
+| `ModuleNotFoundError: No module named 'fastapi'` | Your shell found a `uvicorn` outside the venv (e.g. `~/.local/bin`). Use `python -m uvicorn app:app` instead of bare `uvicorn` |
 | Page won't load | Check the uvicorn Terminal is still running; URL must be `http://127.0.0.1:8000` exactly |
 | Upload spins forever | The file must be a PDF; try one of the sample buttons instead |
 | `OPENAI_API_KEY` errors | You skipped step 8's `export`; or the key is invalid — check it at platform.openai.com |
