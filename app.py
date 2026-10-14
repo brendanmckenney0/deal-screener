@@ -10,7 +10,23 @@ from fastapi.staticfiles import StaticFiles
 from src.pipeline import analyze_pdf
 
 BASE = os.path.dirname(os.path.abspath(__file__))
-OMS_DIR = os.path.join(BASE, "data", "oms")
+# DEALSCREENER_DATA lets serverless deployments point at a writable dir
+# (e.g. /tmp/...); local dev uses the repo root as before.
+DATA_BASE = os.environ.get("DEALSCREENER_DATA", BASE)
+OMS_DIR = os.path.join(DATA_BASE, "data", "oms")
+
+
+def _ensure_samples():
+    """Cold-start bootstrap: generate the fictional sample OMs if missing
+    (fresh serverless container)."""
+    if os.path.isdir(OMS_DIR) and any(
+            f.lower().endswith(".pdf") for f in os.listdir(OMS_DIR)):
+        return
+    from scripts.generate_oms import main as generate_oms
+    generate_oms(DATA_BASE)
+
+
+_ensure_samples()
 
 app = FastAPI(title="DealScreener")
 app.mount("/static", StaticFiles(directory=os.path.join(BASE, "static")),
