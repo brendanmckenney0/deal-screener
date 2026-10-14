@@ -464,7 +464,16 @@ def build_ironworks():
     return b
 
 
-def main():
+def main(base_dir=None):
+    """Generate the three fictional sample OMs + ground truth.
+
+    base_dir defaults to the repo root (local dev); pass /tmp/... on
+    serverless cold starts.
+    """
+    global OMS_DIR, GT_DIR
+    if base_dir:
+        OMS_DIR = os.path.join(base_dir, "data", "oms")
+        GT_DIR = os.path.join(base_dir, "data", "ground_truth")
     os.makedirs(OMS_DIR, exist_ok=True)
     os.makedirs(GT_DIR, exist_ok=True)
     builders = [build_maple_grove(), build_harbor_point(), build_ironworks()]
